@@ -1,0 +1,111 @@
+# Bank Customer Churn Prediction Report
+
+## Abstract
+
+This project aimed to predict bank customer churn by developing an end-to-end data science pipeline. The process involved data preprocessing, exploratory data analysis, and the application of several machine learning models (Logistic Regression, Random Forest, and XGBoost). Ultimately, XGBoost—with hyperparameter tuning and threshold adjustments—yielded the best performance in terms of identifying churners.
+
+## Introduction
+
+Customer churn is a major concern for banks, as retaining existing customers is generally more cost-effective than acquiring new ones. This project focused on building predictive models to identify customers likely to churn so that targeted retention strategies can be applied. A comprehensive analysis was performed on the Bank Customer Churn dataset from Kaggle.
+
+## Dataset Description
+
+- **Source:** Bank Customer Churn dataset from Kaggle.
+- **Features:**
+  - `customer_id`: Unique customer identifier.
+  - `credit_score`: Customer’s credit score.
+  - `country`: Customer's country.
+  - `gender`: Customer's gender.
+  - `age`: Customer age.
+  - `tenure`: Number of years the customer has been with the bank.
+  - `balance`: Account balance.
+  - `products_number`: Number of bank products used.
+  - `credit_card`: Indicator if the customer has a credit card.
+  - `active_member`: Whether the customer is an active member.
+  - `estimated_salary`: Estimated annual salary.
+  - `churn`: Target variable (0 = stayed, 1 = churned).
+- **Data Modifications:**  
+  Columns like `credit_card` and `tenure` were dropped, and customers from Spain were excluded to focus the analysis.
+
+## Data Preprocessing
+
+The following preprocessing steps were performed:
+
+1. **Data Cleaning:**
+   - Dropped unnecessary columns and filtered the dataset.
+   - Handled missing values.
+2. **Feature Engineering:**
+   - One-hot encoded categorical variables.
+   - Standardized numerical features using `StandardScaler`.
+3. **Balancing the Dataset:**
+   - Applied SMOTE (Synthetic Minority Over-sampling Technique) to balance the training data due to class imbalance.
+4. **Artifact Saving:**
+   - Saved the scaler for future use during model deployment.
+
+## Exploratory Data Analysis (EDA)
+
+Key insights from EDA included:
+
+- Significant class imbalance, with many more customers staying than churning.
+- Certain features (such as credit score, balance, and estimated salary) showed promising correlation with churn.
+- The need for oversampling to improve model performance on the minority (churn) class.
+
+## Modeling and Evaluation
+
+### Logistic Regression (Baseline)
+
+- **Observation:**
+  - Achieved high overall accuracy but very low recall for the churn class.
+  - Not suitable for identifying churners due to its inability to capture complex patterns in the data.
+
+### Random Forest
+
+- **Observation:**
+  - Improved performance with an overall accuracy of approximately 81.5%.
+  - Churn recall increased to around 61% with threshold adjustments.
+  - Provided better balance than Logistic Regression but still had limitations in identifying churners.
+
+### XGBoost (Best Model)
+
+- **Tuning and Adjustments:**
+  - Hyperparameter tuning was performed using `RandomizedSearchCV` to adjust parameters such as `n_estimators`, `max_depth`, `learning_rate`, and `scale_pos_weight`.
+  - A decision threshold was lowered to 0.4, which improved churn recall.
+- **Best Output Metrics:**
+  - **Accuracy:** 76.54%
+  - **Classification Report (Churn Class):**
+    - **Precision:** 47%
+    - **Recall:** 74%
+    - **F1-Score:** 0.58
+  - **Confusion Matrix:**
+    ```
+    [[910 270]
+     [ 83 242]]
+    ```
+- **Interpretation:**  
+  With a recall of 74%, the model correctly identifies a significant portion of churners, though it does so at the expense of precision (i.e., a higher number of false positives). In the context of churn prediction, this trade-off is acceptable if the cost of missing a churner outweighs the cost of a false positive.
+
+## Conclusion
+
+The analysis revealed that:
+
+- Baseline models like Logistic Regression were insufficient for detecting churn due to low recall.
+- Random Forest provided a noticeable improvement, yet XGBoost—with fine-tuning and decision threshold adjustment—emerged as the best model.
+- The best XGBoost model achieves:
+  - A recall of 74% for the churn class, ensuring most churners are flagged.
+  - An overall accuracy of 76.54%.
+- This balance between recall and precision is crucial for a bank’s retention strategy, where identifying as many churners as possible is a priority.
+
+## Future Work
+
+- **Further Tuning:**  
+  Further fine-tuning and cost-sensitive adjustments can be explored to improve precision without sacrificing recall.
+- **Deployment:**  
+  The next step involves deploying the best model using an API framework (e.g., Flask or FastAPI) or an interactive dashboard (e.g., Streamlit) to integrate it into a production environment.
+- **Monitoring:**  
+  Continuous monitoring and retraining with new data will be essential to maintain model performance over time.
+
+## References
+
+- [Kaggle Dataset: Bank Customer Churn](https://www.kaggle.com/datasets)
+- [SMOTE: Synthetic Minority Over-sampling Technique](https://imbalanced-learn.org/)
+- [XGBoost Documentation](https://xgboost.readthedocs.io/)
